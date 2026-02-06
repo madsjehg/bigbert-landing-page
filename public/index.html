@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>bigbert - the guilt-trip fitness app</title>
+  <meta name="description" content="meet bert. he's a stick figure. he lives in your phone. and he will NOT let you skip leg day. a fitness app that guilts you into getting fit.">
+  <meta property="og:title" content="bigbert - the guilt-trip fitness app">
+  <meta property="og:description" content="meet bert. he's a stick figure. he lives in your phone. and he will NOT let you skip leg day.">
+  <meta property="og:image" content="/assets/bigbert-app-icon.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/bigbert-app-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Coming Soon', cursive;
+      background-color: #FFFEF5;
+      color: #2D3436;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Notebook lines background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: repeating-linear-gradient(
+        transparent,
+        transparent 31px,
+        #B8D4E8 31px,
+        #B8D4E8 32px
+      );
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Paper texture overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('/assets/crumble-texture.png');
+      background-size: cover;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ---- HERO ---- */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 40px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .hero-bert {
+      width: 150px;
+      height: auto;
+    }
+
+    .hero h1 {
+      font-family: 'Coming Soon', cursive;
+      font-size: 48px;
+      color: #2D3436;
+      margin-bottom: 8px;
+      font-weight: 400;
+    }
+
+    .hero h1 span {
+      color: #4A90A4;
+    }
+
+    .hero .tagline {
+      font-size: 22px;
+      color: #636E72;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .hero .subtitle {
+      font-size: 17px;
+      color: #636E72;
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .app-store-badge {
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+
+    .app-store-badge:hover {
+      transform: scale(1.05);
+    }
+
+    .app-store-badge img {
+      height: 54px;
+    }
+
+    /* ---- SCREENSHOT CAROUSEL ---- */
+    .screenshots-section {
+      padding: 40px 0;
+      overflow: hidden;
+    }
+
+    .screenshots-section h2 {
+      text-align: center;
+      font-family: 'Coming Soon', cursive;
+      font-size: 28px;
+      font-weight: 400;
+      color: #2D3436;
+      margin-bottom: 32px;
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 10px 0;
+    }
+
+    .carousel-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel-slide {
+      flex: 0 0 auto;
+      scroll-snap-align: center;
+      width: 240px;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 3px 4px 12px rgba(0,0,0,0.12);
+      border: 2px solid #B2BEC3;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid #B2BEC3;
+      background: #FFFEF5;
+      font-family: 'Coming Soon', cursive;
+      font-size: 20px;
+      color: #4A90A4;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 2;
+    }
+
+    .carousel-btn:hover {
+      background: #4A90A4;
+      color: #FFFEF5;
+      border-color: #4A90A4;
+    }
+
+    .carousel-btn.prev { left: 8px; }
+    .carousel-btn.next { right: 8px; }
+
+    /* ---- EVOLUTION SECTION ---- */
+    .evolution-section {
+      padding: 60px 24px;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .evolution-section h2 {
+      font-family: 'Coming Soon', cursive;
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .evolution-section .section-sub {
+      font-size: 17px;
+      color: #636E72;
+      margin-bottom: 40px;
+    }
+
+    .evolution-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .evo-stage {
+      text-align: center;
+      flex: 0 0 auto;
+    }
+
+    .evo-stage img {
+      height: 100px;
+      width: auto;
+      margin-bottom: 8px;
+    }
+
+    .evo-stage.big img {
+      height: 160px;
+    }
+
+    .evo-stage .evo-label {
+      font-size: 14px;
+      color: #636E72;
+    }
+
+    .evo-stage .evo-label.highlight {
+      color: #4A90A4;
+      font-size: 16px;
+    }
+
+    .evo-arrow {
+      font-size: 24px;
+      color: #B2BEC3;
+      align-self: center;
+      margin-bottom: 28px;
+    }
+
+    .evo-dots {
+      font-size: 28px;
+      color: #B2BEC3;
+      align-self: center;
+      margin-bottom: 28px;
+      letter-spacing: 4px;
+    }
+
+    /* ---- HOW IT WORKS ---- */
+    .how-section {
+      padding: 60px 24px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .how-section h2 {
+      font-family: 'Coming Soon', cursive;
+      font-size: 28px;
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .how-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .how-step {
+      background: transparent;
+      border: 2px solid #B2BEC3;
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .how-step .step-num {
+      position: absolute;
+      top: -14px;
+      left: 20px;
+      background: #4A90A4;
+      color: #FFFEF5;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .how-step h3 {
+      font-family: 'Coming Soon', cursive;
+      font-size: 20px;
+      font-weight: 400;
+      color: #4A90A4;
+      margin-bottom: 6px;
+    }
+
+    .how-step p {
+      font-size: 16px;
+      color: #636E72;
+      line-height: 1.5;
+    }
+
+    /* ---- STICKY NOTE (bert quote) ---- */
+    .sticky-section {
+      padding: 40px 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .sticky-note {
+      background: #FFEAA7;
+      padding: 28px 32px;
+      border-radius: 4px;
+      max-width: 420px;
+      transform: rotate(-1.5deg);
+      box-shadow: 2px 3px 8px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .sticky-tape {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 20px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 2px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .sticky-note p {
+      font-size: 18px;
+      color: #2D3436;
+      font-style: italic;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .sticky-note .bert-sig {
+      text-align: right;
+      margin-top: 12px;
+      font-size: 15px;
+      color: #636E72;
+      font-style: normal;
+    }
+
+    /* ---- FEATURES ---- */
+    .features-section {
+      padding: 60px 24px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .features-section h2 {
+      font-family: 'Coming Soon', cursive;
+      font-size: 28px;
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: transparent;
+      border: 2px solid #B2BEC3;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .feature-card .feature-icon {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      margin-bottom: 8px;
+    }
+
+    .feature-card h3 {
+      font-family: 'Coming Soon', cursive;
+      font-size: 17px;
+      font-weight: 400;
+      color: #4A90A4;
+      margin-bottom: 4px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: #636E72;
+      line-height: 1.4;
+    }
+
+    /* ---- BERTA SHOWCASE ---- */
+    .berta-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    .berta-image {
+      width: 160px;
+      height: auto;
+      flex-shrink: 0;
+    }
+
+    .berta-text h2 {
+      font-family: 'Coming Soon', cursive;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .berta-text p {
+      font-size: 16px;
+      color: #636E72;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    /* ---- WORKOUT DEMO ---- */
+    .workout-demo-section {
+      padding: 60px 24px;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .workout-demo-section h2 {
+      font-family: 'Coming Soon', cursive;
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .workout-demo-section .section-sub {
+      font-size: 17px;
+      color: #636E72;
+      margin-bottom: 40px;
+    }
+
+    .workout-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .workout-card {
+      background: transparent;
+      border: 2px solid #B2BEC3;
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    .workout-card img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+
+    .workout-card .exercise-name {
+      font-family: 'Coming Soon', cursive;
+      font-size: 15px;
+      color: #4A90A4;
+      margin-bottom: 4px;
+    }
+
+    .workout-card .exercise-detail {
+      font-size: 13px;
+      color: #636E72;
+    }
+
+    /* ---- CTA ---- */
+    .cta-section {
+      padding: 60px 24px 40px;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cta-section h2 {
+      font-family: 'Coming Soon', cursive;
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    .cta-section p {
+      font-size: 17px;
+      color: #636E72;
+      margin-bottom: 32px;
+    }
+
+    /* ---- FOOTER ---- */
+    .footer {
+      padding: 40px 24px;
+      text-align: center;
+      border-top: 1px solid #B8D4E8;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+
+    .footer-links a {
+      font-size: 15px;
+      color: #4A90A4;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    .footer .footer-copy {
+      font-size: 13px;
+      color: #B2BEC3;
+    }
+
+    /* ---- MOBILE ---- */
+    @media (max-width: 640px) {
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero .tagline {
+        font-size: 18px;
+      }
+
+      .carousel-wrapper {
+        padding: 0 20px;
+      }
+
+      .carousel-slide {
+        width: 200px;
+      }
+
+      .carousel-btn {
+        display: none;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .evolution-row {
+        gap: 8px;
+      }
+
+      .evo-stage img {
+        height: 70px;
+      }
+
+      .evo-stage.big img {
+        height: 110px;
+      }
+
+      .evo-arrow {
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+
+      .berta-section {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .berta-image {
+        width: 130px;
+      }
+
+      .workout-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .hero-bert {
+        width: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+
+    <!-- HERO -->
+    <section class="hero">
+      <img src="/assets/barelybert-animated.webp" alt="bert waving" class="hero-bert">
+      <h1><span>big</span>bert</h1>
+      <p class="tagline">the stick figure that guilt-trips you into getting fit.</p>
+      <p class="subtitle">
+        meet bert. he lives in your phone. he tracks your workouts, gains XP, evolves when you show up, and shrinks when you don't. he will NOT let you skip leg day.
+      </p>
+      <a href="https://apps.apple.com/app/id6758694803" class="app-store-badge">
+        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store">
+      </a>
+    </section>
+
+    <!-- SCREENSHOT CAROUSEL -->
+    <section class="screenshots-section">
+      <h2>what it looks like inside</h2>
+      <div class="carousel-wrapper">
+        <button class="carousel-btn prev" onclick="scrollCarousel(-1)" aria-label="Previous">&larr;</button>
+        <div class="carousel-track" id="carousel">
+          <div class="carousel-slide"><img src="/assets/bigbert-screenshot-1.png" alt="bigbert screenshot 1"></div>
+          <div class="carousel-slide"><img src="/assets/bigbert-screenshot-2.png" alt="bigbert screenshot 2"></div>
+          <div class="carousel-slide"><img src="/assets/bigbert-screenshot-3.png" alt="bigbert screenshot 3"></div>
+          <div class="carousel-slide"><img src="/assets/bigbert-screenshot-4.png" alt="bigbert screenshot 4"></div>
+          <div class="carousel-slide"><img src="/assets/bigbert-screenshot-5.png" alt="bigbert screenshot 5"></div>
+        </div>
+        <button class="carousel-btn next" onclick="scrollCarousel(1)" aria-label="Next">&rarr;</button>
+      </div>
+    </section>
+
+    <!-- BERT QUOTE -->
+    <section class="sticky-section">
+      <div class="sticky-note">
+        <div class="sticky-tape"></div>
+        <p>"i'm a stick figure in your phone. i can't force you to work out. but i CAN make you feel bad about not doing it. and honestly? that's more effective."</p>
+        <div class="bert-sig">- bert</div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-section">
+      <h2>how it works</h2>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-num">1</div>
+          <h3>tell bert about yourself</h3>
+          <p>quick onboarding. your goals, schedule, experience level. bert listens. bert judges. bert plans.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">2</div>
+          <h3>get a personalized plan</h3>
+          <p>AI-generated workout plan tailored to you. bert didn't write it himself — he's a stick figure — but he asked someone smart.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">3</div>
+          <h3>show up. or don't.</h3>
+          <p>complete workouts to earn XP and level up bert. skip them and... well. bert will have things to say. many things. at 8am.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">4</div>
+          <h3>watch bert evolve</h3>
+          <p>from barelybert to gigabert. 12 levels. your consistency is literally his body. no pressure.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BERTA SHOWCASE -->
+    <section class="berta-section">
+      <img src="/assets/level-1-berta-animated.webp" alt="berta animated" class="berta-image">
+      <div class="berta-text">
+        <h2>oh, and there's berta.</h2>
+        <p>same guilt. same judgment. better hair. pick her during onboarding and she'll be the one disappointed in you instead.</p>
+        <p>same 12 levels. same evolution. same passive-aggressive notifications at 8am.</p>
+      </div>
+    </section>
+
+    <!-- CHARACTER EVOLUTION -->
+    <section class="evolution-section">
+      <h2>the evolution of bert (& berta)</h2>
+      <p class="section-sub">your gains are their gains. literally.</p>
+      <div class="evolution-row">
+        <div class="evo-stage">
+          <img src="/assets/level-1.png" alt="barelybert">
+          <div class="evo-label">level 1</div>
+        </div>
+        <div class="evo-arrow">&rarr;</div>
+        <div class="evo-stage">
+          <img src="/assets/level-2.png" alt="level 2 bert">
+          <div class="evo-label">level 2</div>
+        </div>
+        <div class="evo-arrow">&rarr;</div>
+        <div class="evo-dots">&middot; &middot; &middot;</div>
+        <div class="evo-arrow">&rarr;</div>
+        <div class="evo-stage">
+          <img src="/assets/level-11.png" alt="chadbert">
+          <div class="evo-label">level 11</div>
+        </div>
+        <div class="evo-arrow">&rarr;</div>
+        <div class="evo-stage big">
+          <img src="/assets/level-12.png" alt="GIGABERT">
+          <div class="evo-label highlight">GIGABERT</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section">
+      <h2>what you're getting</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <img src="/assets/bullseye-icon.png" alt="personalized" class="feature-icon">
+          <h3>personalized workouts</h3>
+          <p>AI builds your plan around your goals, schedule, and equipment.</p>
+        </div>
+        <div class="feature-card">
+          <img src="/assets/fire-icon.png" alt="XP" class="feature-icon">
+          <h3>XP & leveling</h3>
+          <p>earn XP every workout. level up bert. lose XP when you skip. bert remembers.</p>
+        </div>
+        <div class="feature-card">
+          <img src="/assets/sadsmiley-icon.png" alt="guilt" class="feature-icon">
+          <h3>guilt-trip notifications</h3>
+          <p>skip a workout and bert will find you. at 8am. and 9am. and 10am.</p>
+        </div>
+        <div class="feature-card">
+          <img src="/assets/muscle-icon.png" alt="evolution" class="feature-icon">
+          <h3>12 evolution stages</h3>
+          <p>barelybert to gigabert. your consistency shapes him. literally.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECOND BERT QUOTE -->
+    <section class="sticky-section">
+      <div class="sticky-note" style="transform: rotate(1deg);">
+        <div class="sticky-tape"></div>
+        <p>"look. i can't do push-ups. i don't have elbows. but i can guilt you into doing them and honestly that's the same thing."</p>
+        <div class="bert-sig">- bert</div>
+      </div>
+    </section>
+
+    <!-- WORKOUT MODE DEMO -->
+    <section class="workout-demo-section">
+      <h2>workout mode</h2>
+      <p class="section-sub">every exercise comes with animated guides. bert can't demonstrate — no elbows — so he drew these instead.</p>
+      <div class="workout-grid">
+        <div class="workout-card">
+          <img src="/assets/bench-press-gif.gif" alt="bench press animation">
+          <div class="exercise-name">bench press</div>
+          <div class="exercise-detail">3 sets x 10 reps</div>
+        </div>
+        <div class="workout-card">
+          <img src="/assets/barbell-squat-gif.gif" alt="barbell squat animation">
+          <div class="exercise-name">barbell squat</div>
+          <div class="exercise-detail">4 sets x 8 reps</div>
+        </div>
+        <div class="workout-card">
+          <img src="/assets/pullup-gif.gif" alt="pull-up animation">
+          <div class="exercise-name">pull-ups</div>
+          <div class="exercise-detail">3 sets x 8 reps</div>
+        </div>
+        <div class="workout-card">
+          <img src="/assets/deadlift-gif.gif" alt="deadlift animation">
+          <div class="exercise-name">deadlift</div>
+          <div class="exercise-detail">3 sets x 6 reps</div>
+        </div>
+        <div class="workout-card">
+          <img src="/assets/dumbbell-curls-gif.gif" alt="dumbbell curls animation">
+          <div class="exercise-name">dumbbell curls</div>
+          <div class="exercise-detail">3 sets x 12 reps</div>
+        </div>
+        <div class="workout-card">
+          <img src="/assets/pushup-gif.gif" alt="push-up animation">
+          <div class="exercise-name">push-ups</div>
+          <div class="exercise-detail">3 sets x 15 reps</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <h2>ready to disappoint a stick figure?</h2>
+      <p>download bigbert. start working out. or don't. bert will be waiting either way.</p>
+      <a href="https://apps.apple.com/app/id6758694803" class="app-store-badge">
+        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store">
+      </a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/tos">Terms of Service</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 bigbert. all gains reserved.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    function scrollCarousel(dir) {
+      const track = document.getElementById('carousel');
+      const slideWidth = track.querySelector('.carousel-slide').offsetWidth + 20;
+      track.scrollBy({ left: dir * slideWidth, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
